@@ -177,7 +177,7 @@ fn strip_quotes(s: &str) -> String {
 /// right bucket.
 fn classify_linux(id: &str, id_like: &str) -> Os {
     let id_like_parts: Vec<&str> = id_like.split_whitespace().collect();
-    let is_like = |needle: &str| id == needle || id_like_parts.iter().any(|x| *x == needle);
+    let is_like = |needle: &str| id == needle || id_like_parts.contains(&needle);
 
     if is_like("ubuntu") {
         return Os::Ubuntu;
