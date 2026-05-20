@@ -22,6 +22,8 @@
 
 The commands are printed inline, prefixed with `$`, ready to copy and paste.
 
+<img width="1166" height="678" alt="Screenshot 2026-05-19 at 5 58 13 PM" src="https://github.com/user-attachments/assets/ea4b8202-68c9-4bbd-8f32-b002c5f8a394" />
+
 ## Built-in guides
 
 `docker`, `node` (`nodejs`, `npm`, `nvm`), `rust` (`cargo`, `rustup`), `python` (`pip`), `git`, `postgres` (`postgresql`, `psql`), `nginx`, `go` (`golang`), `redis`, `homebrew` (`brew`).
