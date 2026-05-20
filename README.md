@@ -35,6 +35,8 @@ cargo build --release
 
 Zero dependencies beyond the Rust standard library.
 
+<img width="1000" height="562" alt="goose-demo" src="https://github.com/user-attachments/assets/fb400aef-3c33-4755-984f-a4ba45e53176" />
+
 ## Why not just run the commands
 
 Two reasons. First, `sudo` and shell history mean half the time the right move is to read the line, paste it into the right shell with the right environment, and watch what happens, not delegate to a tool. Second, install scripts evolve; this gives you the structure and lets you sanity check the latest URL or flag before you commit.
