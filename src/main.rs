@@ -251,13 +251,11 @@ fn parse_args<I: IntoIterator<Item = String>>(args: I) -> Result<Args, String> {
                 let v = iter
                     .next()
                     .ok_or_else(|| "--os requires a value".to_string())?;
-                out.os_override =
-                    Some(parse_os(&v).ok_or_else(|| format!("unknown OS: {v}"))?);
+                out.os_override = Some(parse_os(&v).ok_or_else(|| format!("unknown OS: {v}"))?);
             }
             s if s.starts_with("--os=") => {
                 let v = &s[5..];
-                out.os_override =
-                    Some(parse_os(v).ok_or_else(|| format!("unknown OS: {v}"))?);
+                out.os_override = Some(parse_os(v).ok_or_else(|| format!("unknown OS: {v}"))?);
             }
             "--" => {
                 // Everything after `--` is positional.
@@ -341,13 +339,21 @@ struct Guide {
 /// Known targets, with their aliases and a one-line description.
 /// Single source of truth for both `canonical()` and `--list`.
 const KNOWN_TARGETS: &[(&str, &[&str], &str)] = &[
-    ("docker", &["docker-compose"], "Docker Engine / Docker Desktop"),
+    (
+        "docker",
+        &["docker-compose"],
+        "Docker Engine / Docker Desktop",
+    ),
     (
         "nodejs",
         &["node", "npm", "nvm"],
         "Node.js (via nvm) and npm",
     ),
-    ("rust", &["cargo", "rustup"], "Rust toolchain (rustup, cargo)"),
+    (
+        "rust",
+        &["cargo", "rustup"],
+        "Rust toolchain (rustup, cargo)",
+    ),
     ("python", &["python3", "pip", "pip3"], "Python 3 and pip"),
     ("git", &[], "Git"),
     ("postgresql", &["postgres", "psql"], "PostgreSQL"),
@@ -1182,7 +1188,10 @@ fn show_all(guide: &Guide) {
             }
         }
         if let Some(note) = &step.note {
-            println!("   {}note:{} {}{}{}", p.yellow, p.reset, p.dim, note, p.reset);
+            println!(
+                "   {}note:{} {}{}{}",
+                p.yellow, p.reset, p.dim, note, p.reset
+            );
         }
     }
     println!();
@@ -1288,9 +1297,8 @@ fn main() {
 
     // Decide whether to emit color, then freeze that choice for the rest of
     // the process. Precedence: --no-color > NO_COLOR env > TTY detection.
-    let want_color = !args.no_color
-        && env::var_os("NO_COLOR").is_none()
-        && io::stdout().is_terminal();
+    let want_color =
+        !args.no_color && env::var_os("NO_COLOR").is_none() && io::stdout().is_terminal();
     let _ = PALETTE.set(if want_color {
         Palette::on()
     } else {
@@ -1332,7 +1340,14 @@ fn main() {
     let p = pal();
     if !args.show_all {
         println!();
-        println!("{}detected:{} {}{}{}", p.dim, p.reset, p.green, os.label(), p.reset);
+        println!(
+            "{}detected:{} {}{}{}",
+            p.dim,
+            p.reset,
+            p.green,
+            os.label(),
+            p.reset
+        );
     }
 
     let guide = build_guide(&target, os);
@@ -1617,14 +1632,14 @@ HOME_URL="https://example.com"
     #[test]
     fn build_guide_unknown_falls_back_to_pkg_manager() {
         let guide = build_guide("htop", Os::Ubuntu);
-        assert!(guide
-            .steps
-            .iter()
-            .any(|s| s.command.as_deref().is_some_and(|c| c.contains("apt-cache search"))));
-        assert!(guide
-            .steps
-            .iter()
-            .any(|s| s.command.as_deref().is_some_and(|c| c.contains("sudo apt install"))));
+        assert!(guide.steps.iter().any(|s| s
+            .command
+            .as_deref()
+            .is_some_and(|c| c.contains("apt-cache search"))));
+        assert!(guide.steps.iter().any(|s| s
+            .command
+            .as_deref()
+            .is_some_and(|c| c.contains("sudo apt install"))));
     }
 
     #[test]
