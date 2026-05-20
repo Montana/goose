@@ -52,11 +52,42 @@ jobs:
       - name: test
         run: cargo test --release --verbose
 
-      - name: smoke test (unix)
+      - name: smoke — --help exits 0
+        run: ./target/release/goose --help
+
+      - name: smoke — --version exits 0
+        run: ./target/release/goose --version
+
+      - name: smoke — --list exits 0
+        run: ./target/release/goose --list
+
+      - name: smoke — --all renders a known target
+        shell: bash
+        run: |
+          out=$(./target/release/goose --all --no-color git)
+          echo "$out"
+          echo "$out" | grep -q "git --version"
+
+      - name: smoke — --os override works
+        shell: bash
+        run: |
+          out=$(./target/release/goose --all --no-color --os ubuntu docker)
+          echo "$out" | grep -q "apt"
+
+      - name: smoke — unknown option exits 2
+        shell: bash
+        run: |
+          set +e
+          ./target/release/goose --frobnicate
+          code=$?
+          set -e
+          test "$code" -eq 2
+
+      - name: smoke — interactive (unix)
         if: runner.os != 'Windows'
         run: printf "git\n" | ./target/release/goose
 
-      - name: smoke test (windows)
+      - name: smoke — interactive (windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
