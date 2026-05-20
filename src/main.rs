@@ -620,14 +620,16 @@ fn python_steps(os: Os) -> Vec<Step> {
             ),
             s("Verify", "python --version && pip --version"),
         ],
-        Os::Windows => vec![
+        Os::Windows => {
+            vec![
             sn(
                 "Install Python via winget",
                 "winget install -e --id Python.Python.3.12",
                 "If you use the GUI installer instead, make sure 'Add Python to PATH' is checked.",
             ),
             s("Verify in a new terminal", "python --version && pip --version"),
-        ],
+        ]
+        }
         _ => generic_steps("python", os),
     }
 }
@@ -1159,7 +1161,10 @@ fn print_step(i: usize, total: usize, step: &Step) {
     }
     if let Some(note) = &step.note {
         println!();
-        println!("  {}note:{} {}{}{}", p.yellow, p.reset, p.dim, note, p.reset);
+        println!(
+            "  {}note:{} {}{}{}",
+            p.yellow, p.reset, p.dim, note, p.reset
+        );
     }
     println!();
 }
@@ -1177,7 +1182,15 @@ fn show_all(guide: &Guide) {
     );
     for (i, step) in guide.steps.iter().enumerate() {
         println!();
-        println!("{}{}.{} {}{}{}", p.dim, i + 1, p.reset, p.bold, step.title, p.reset);
+        println!(
+            "{}{}.{} {}{}{}",
+            p.dim,
+            i + 1,
+            p.reset,
+            p.bold,
+            step.title,
+            p.reset
+        );
         if let Some(cmd) = &step.command {
             for (li, line) in cmd.lines().enumerate() {
                 if li == 0 {
