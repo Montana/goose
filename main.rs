@@ -1,7 +1,5 @@
 use std::io::{self, BufRead, Write};
 
-// ── ANSI styling ───────────────────────────────────────────────────────────
-
 const RESET: &str = "\x1b[0m";
 const BOLD: &str = "\x1b[1m";
 const DIM: &str = "\x1b[2m";
@@ -10,9 +8,8 @@ const GREEN: &str = "\x1b[32m";
 const YELLOW: &str = "\x1b[33m";
 const MAGENTA: &str = "\x1b[35m";
 
-// ── OS detection ───────────────────────────────────────────────────────────
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(clippy::enum_variant_names)]
 enum Os {
     MacOs,
     Ubuntu,
@@ -403,14 +400,16 @@ fn python_steps(os: Os) -> Vec<Step> {
             ),
             s("Verify", "python --version && pip --version"),
         ],
-        Os::Windows => vec![
+        Os::Windows => {
+            vec![
             sn(
                 "Install Python via winget",
                 "winget install -e --id Python.Python.3.12",
                 "If you use the GUI installer instead, make sure 'Add Python to PATH' is checked.",
             ),
             s("Verify in a new terminal", "python --version && pip --version"),
-        ],
+        ]
+        }
         _ => generic_steps("python", os),
     }
 }
@@ -418,10 +417,7 @@ fn python_steps(os: Os) -> Vec<Step> {
 fn git_steps(os: Os) -> Vec<Step> {
     let install = match os {
         Os::MacOs => s("Install Git", "brew install git"),
-        Os::Ubuntu | Os::Debian => s(
-            "Install Git",
-            "sudo apt update && sudo apt install -y git",
-        ),
+        Os::Ubuntu | Os::Debian => s("Install Git", "sudo apt update && sudo apt install -y git"),
         Os::Fedora => s("Install Git", "sudo dnf install -y git"),
         Os::Arch => s("Install Git", "sudo pacman -S --noconfirm git"),
         Os::Windows => sn(
@@ -503,7 +499,10 @@ fn postgres_steps(os: Os) -> Vec<Step> {
             ),
         ],
         Os::Arch => vec![
-            s("Install PostgreSQL", "sudo pacman -S --noconfirm postgresql"),
+            s(
+                "Install PostgreSQL",
+                "sudo pacman -S --noconfirm postgresql",
+            ),
             sn(
                 "Initialize the data directory as the postgres user",
                 "sudo -iu postgres initdb -D /var/lib/postgres/data",
@@ -814,9 +813,7 @@ fn walk_through(guide: &Guide) -> io::Result<()> {
                 return Ok(());
             }
             "b" | "back" => {
-                if i > 0 {
-                    i -= 1;
-                }
+                i = i.saturating_sub(1);
             }
             "a" | "all" | "s" | "show" => {
                 show_all(guide);
