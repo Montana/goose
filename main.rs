@@ -1,10 +1,3 @@
-//! goose — step-by-step install helper.
-//!
-//! Asks what you're installing, detects your OS (and Linux distro), then walks
-//! you through the next commands one at a time. It never runs anything; you
-//! copy and paste what you want. The goal is to remember the install dance
-//! without giving up control over your machine.
-
 use std::io::{self, BufRead, Write};
 
 // ── ANSI styling ───────────────────────────────────────────────────────────
