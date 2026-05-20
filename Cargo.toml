@@ -1,0 +1,16 @@
+[package]
+name = "goose"
+version = "0.1.0"
+edition = "2021"
+description = "Step-by-step install helper. Tells you what to type, doesn't run it."
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "goose"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
