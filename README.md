@@ -9,8 +9,8 @@
 
 ```
   ╭──────╮
-  │  ◔   │  goose — step-by-step install helper
-  ╰──┬───╯  tells you what to type, never runs it
+  │  ◔   │  goose: step-by-step install helper
+  ╰──┬───╯  
      ╰╮
 ```
 
