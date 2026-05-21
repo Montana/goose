@@ -235,18 +235,13 @@ impl Arch {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 enum OutputFormat {
+    #[default]
     Text,
     Markdown,
     Json,
     Script,
-}
-
-impl Default for OutputFormat {
-    fn default() -> Self {
-        OutputFormat::Text
-    }
 }
 
 fn parse_format(s: &str) -> Option<OutputFormat> {
@@ -2455,11 +2450,9 @@ fn main() {
             OutputFormat::Text => {
                 if args.show_all {
                     show_all(&guide);
-                } else {
-                    if let Err(e) = walk_through(&guide) {
-                        eprintln!("error: {e}");
-                        std::process::exit(1);
-                    }
+                } else if let Err(e) = walk_through(&guide) {
+                    eprintln!("error: {e}");
+                    std::process::exit(1);
                 }
             }
         }
