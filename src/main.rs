@@ -361,13 +361,11 @@ fn parse_args<I: IntoIterator<Item = String>>(args: I) -> Result<Args, String> {
                 let v = iter
                     .next()
                     .ok_or_else(|| "--format requires a value".to_string())?;
-                out.format =
-                    parse_format(&v).ok_or_else(|| format!("unknown format: {v}"))?;
+                out.format = parse_format(&v).ok_or_else(|| format!("unknown format: {v}"))?;
             }
             s if s.starts_with("--format=") => {
                 let v = &s[9..];
-                out.format =
-                    parse_format(v).ok_or_else(|| format!("unknown format: {v}"))?;
+                out.format = parse_format(v).ok_or_else(|| format!("unknown format: {v}"))?;
             }
             "--search" => {
                 let v = iter
@@ -1496,10 +1494,7 @@ fn awscli_steps(os: Os) -> Vec<Step> {
             s("Verify", "aws --version"),
         ],
         Os::Windows => vec![
-            s(
-                "Install via winget",
-                "winget install -e --id Amazon.AWSCLI",
-            ),
+            s("Install via winget", "winget install -e --id Amazon.AWSCLI"),
             s("Verify in a new terminal", "aws --version"),
         ],
         _ => generic_steps("awscli", os),
@@ -1666,9 +1661,7 @@ fn edit_distance(a: &str, b: &str, cap: usize) -> usize {
         let mut row_min = curr[0];
         for j in 1..=m {
             let cost = if av[i - 1] == bv[j - 1] { 0 } else { 1 };
-            curr[j] = (prev[j] + 1)
-                .min(curr[j - 1] + 1)
-                .min(prev[j - 1] + cost);
+            curr[j] = (prev[j] + 1).min(curr[j - 1] + 1).min(prev[j - 1] + cost);
             if curr[j] < row_min {
                 row_min = curr[j];
             }
@@ -1956,10 +1949,7 @@ fn json_escape(s: &str) -> String {
 fn render_json(guide: &Guide, action: &str) -> String {
     let mut out = String::new();
     out.push_str("{\n");
-    out.push_str(&format!(
-        "  \"action\": \"{}\",\n",
-        json_escape(action)
-    ));
+    out.push_str(&format!("  \"action\": \"{}\",\n", json_escape(action)));
     out.push_str(&format!(
         "  \"target\": \"{}\",\n",
         json_escape(&guide.target)
@@ -1976,10 +1966,7 @@ fn render_json(guide: &Guide, action: &str) -> String {
             json_escape(&st.title)
         ));
         match &st.command {
-            Some(c) => out.push_str(&format!(
-                "      \"command\": \"{}\",\n",
-                json_escape(c)
-            )),
+            Some(c) => out.push_str(&format!("      \"command\": \"{}\",\n", json_escape(c))),
             None => out.push_str("      \"command\": null,\n"),
         }
         match &st.note {
@@ -2013,7 +2000,12 @@ fn render_script(guide: &Guide, action: &str) -> String {
     ));
     out.push_str("set -euo pipefail\n\n");
     for (i, st) in guide.steps.iter().enumerate() {
-        out.push_str(&format!("# ── step {} of {} — {}\n", i + 1, guide.steps.len(), st.title));
+        out.push_str(&format!(
+            "# ── step {} of {} — {}\n",
+            i + 1,
+            guide.steps.len(),
+            st.title
+        ));
         if let Some(note) = &st.note {
             for line in note.lines() {
                 out.push_str(&format!("#   note: {line}\n"));
@@ -2237,10 +2229,7 @@ fn print_list() {
             "  {}{:<14}{} {}{}{}",
             p.cyan, name, p.reset, p.dim, desc, p.reset
         );
-        println!(
-            "  {:14}{}→ {}{}",
-            "", p.dim, targets.join(", "), p.reset
-        );
+        println!("  {:14}{}→ {}{}", "", p.dim, targets.join(", "), p.reset);
     }
     println!();
     println!(
@@ -2681,7 +2670,11 @@ HOME_URL="https://example.com"
         let a = args(&["docker", "node", "redis"]).unwrap();
         assert_eq!(
             a.targets,
-            vec!["docker".to_string(), "node".to_string(), "redis".to_string()]
+            vec![
+                "docker".to_string(),
+                "node".to_string(),
+                "redis".to_string()
+            ]
         );
     }
 
@@ -2767,17 +2760,29 @@ HOME_URL="https://example.com"
 
     #[test]
     fn cli_format_flag() {
-        assert_eq!(args(&["--format", "markdown"]).unwrap().format, OutputFormat::Markdown);
+        assert_eq!(
+            args(&["--format", "markdown"]).unwrap().format,
+            OutputFormat::Markdown
+        );
         assert_eq!(args(&["--format=json"]).unwrap().format, OutputFormat::Json);
-        assert_eq!(args(&["--format", "script"]).unwrap().format, OutputFormat::Script);
+        assert_eq!(
+            args(&["--format", "script"]).unwrap().format,
+            OutputFormat::Script
+        );
         assert_eq!(args(&["--format=text"]).unwrap().format, OutputFormat::Text);
         assert!(args(&["--format", "yaml"]).is_err());
     }
 
     #[test]
     fn cli_shell_flag() {
-        assert_eq!(args(&["--shell", "fish"]).unwrap().shell_override, Some(Shell::Fish));
-        assert_eq!(args(&["--shell=bash"]).unwrap().shell_override, Some(Shell::Bash));
+        assert_eq!(
+            args(&["--shell", "fish"]).unwrap().shell_override,
+            Some(Shell::Fish)
+        );
+        assert_eq!(
+            args(&["--shell=bash"]).unwrap().shell_override,
+            Some(Shell::Bash)
+        );
         assert!(args(&["--shell", "csh"]).is_err());
     }
 
@@ -2862,7 +2867,8 @@ HOME_URL="https://example.com"
     fn fuzzy_matches_finds_close_targets() {
         let hits = fuzzy_matches("posg", 4, 5);
         assert!(
-            hits.iter().any(|(n, _)| *n == "postgres" || *n == "postgresql"),
+            hits.iter()
+                .any(|(n, _)| *n == "postgres" || *n == "postgresql"),
             "expected postgres/postgresql in: {hits:?}"
         );
     }
@@ -2915,10 +2921,9 @@ HOME_URL="https://example.com"
     fn check_remaps_alias_to_canonical_binary() {
         // 'pip' → python → python3
         let st = check_steps("pip", Os::Ubuntu);
-        assert!(st.iter().any(|s| s
-            .command
-            .as_deref()
-            .is_some_and(|c| c.contains("python3"))));
+        assert!(st
+            .iter()
+            .any(|s| s.command.as_deref().is_some_and(|c| c.contains("python3"))));
     }
 
     #[test]
@@ -2985,8 +2990,8 @@ HOME_URL="https://example.com"
     #[test]
     fn new_targets_have_steps_on_each_supported_os() {
         let new_targets = [
-            "bun", "deno", "pnpm", "neovim", "fzf", "ripgrep", "bat", "jq", "helm",
-            "awscli", "tmux", "rbenv",
+            "bun", "deno", "pnpm", "neovim", "fzf", "ripgrep", "bat", "jq", "helm", "awscli",
+            "tmux", "rbenv",
         ];
         for t in new_targets {
             // At minimum macOS and Ubuntu should produce non-empty steps.
