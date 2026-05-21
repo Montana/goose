@@ -25,20 +25,29 @@ The commands are printed inline, prefixed with `$`, ready to copy and paste.
 
 ## Usage
 
-This is the basic usage of goose: 
+This is the basic usage of goose:
 
 ```
-goose [OPTIONS] [TARGET]
+goose [OPTIONS] [TARGET]...
 ```
 
-Run interactively, or pass a target on the command line:
+Run interactively, or pass one or more targets on the command line:
 
 ```
-goose                       # interactive
-goose docker                # jump straight to docker
-goose --all postgres        # print every step at once (good for piping)
-goose --os ubuntu kubectl   # pretend you're on a different distro
-goose --list                # show known targets
+goose                              # interactive
+goose docker                       # jump straight to docker
+goose docker node redis            # walk through multiple targets in sequence
+goose --preset web-dev             # expand a preset bundle (see --list)
+goose --uninstall docker           # print uninstall commands instead
+goose --check rust                 # 'do I already have it?' detection
+goose --format markdown postgres   # paste-ready output for issues/PR descriptions
+goose --format script -a docker > review.sh   # reviewable, all commands commented
+goose --format json -a node | jq . # pipeable structured output
+goose --search ngx                 # 'did you mean nginx?'
+goose --shell fish rust            # rewrite a few lines for fish syntax
+goose --os ubuntu kubectl          # pretend you're on a different distro
+goose --all postgres               # print every step at once (good for piping)
+goose --list                       # show known targets and presets
 goose --help
 ```
 
@@ -47,19 +56,63 @@ goose --help
 | Flag | Meaning |
 | --- | --- |
 | `-a`, `--all` | Print every step at once instead of walking through one by one |
-| `-l`, `--list` | List known targets and exit |
+| `-l`, `--list` | List known targets and presets, then exit |
+| `--search <QUERY>` | Fuzzy-search known targets (handles typos, suggests close matches) |
+| `--preset <NAME>` | Expand a preset bundle (`web-dev`, `data-sci`, `devops`, `cli-power-user`, `backend`) |
+| `--uninstall` | Print uninstall commands instead of install |
+| `--check` | Print detection commands ('do I already have it?') |
+| `--format <FMT>` | Output format: `text` (default), `markdown`, `json`, `script` |
+| `--shell <SHELL>` | Override shell detection: `bash`, `zsh`, `fish`, `pwsh`, `cmd` |
 | `--os <NAME>` | Override OS detection: `macos`, `ubuntu`, `debian`, `fedora`, `arch`, `linux`, `windows` |
 | `--no-color` | Disable ANSI colors (also honored via the `NO_COLOR` env var) |
 | `-h`, `--help` | Show help |
 | `-V`, `--version` | Show version |
 
-Color is also disabled automatically when stdout isn't a TTY, so `goose docker > steps.txt` produces a clean file.
+Color is also disabled automatically when stdout isn't a TTY (so `goose docker > steps.txt` produces a clean file) and in any non-text format.
+
+### Output formats
+
+- **`text`** — the default interactive walkthrough, or a colored dump with `--all`.
+- **`markdown`** — paste-ready into a GitHub issue, PR description, or README. Each step becomes a `##` heading with a fenced code block; notes become blockquotes.
+- **`json`** — one JSON object per target. Pipe through `jq` for tooling.
+- **`script`** — a bash script with **every command commented out**. The whole point is that you read it, uncomment what you want, then run it deliberately. Same philosophy as the rest of goose: nothing executes without your say-so.
+
+### Presets
+
+Curated bundles, in install order (toolchains before things that depend on them):
+
+| Preset | Contents |
+| --- | --- |
+| `web-dev` | git, node, python, docker, postgres |
+| `data-sci` | git, python, postgres, redis |
+| `devops` | docker, kubectl, helm, terraform, awscli |
+| `cli-power-user` | fzf, ripgrep, bat, jq, tmux, neovim |
+| `backend` | go, postgres, redis, docker |
+
+You can also combine: `goose --preset web-dev redis` prepends the preset and adds redis at the end (deduping by canonical name).
+
+### "Did you mean?"
+
+If you type something that isn't a built-in guide but is close to one, goose mentions it before falling back to the package manager:
+
+```
+$ goose ngnix --os ubuntu --all
+note: 'ngnix' isn't a built-in guide. did you mean: nginx, npm, nvm? falling back to your OS package manager.
+```
+
+It's a nudge, not a block — the fallback still runs in case you really did want `ngnix`.
 
 ## Built-in guides
 
-`docker`, `node` (`nodejs`, `npm`, `nvm`), `rust` (`cargo`, `rustup`), `python` (`pip`), `git`, `postgres` (`postgresql`, `psql`), `nginx`, `go` (`golang`), `redis`, `homebrew` (`brew`), `kubectl` (`k8s`, `kubernetes`), `gh` (`github-cli`), `terraform`.
+Toolchains & runtimes: `docker`, `node` (`nodejs`, `npm`, `nvm`), `rust` (`cargo`, `rustup`), `python` (`pip`), `go` (`golang`), `bun`, `deno`, `pnpm`, `rbenv` (`ruby`).
 
-The Linux Go step is architecture-aware, it picks the right tarball for `x86_64`, `aarch64`, or `armv6` (Raspberry Pi).
+Servers & data stores: `postgres` (`postgresql`, `psql`), `nginx`, `redis`.
+
+Cloud & infra: `kubectl` (`k8s`, `kubernetes`), `helm`, `terraform`, `awscli` (`aws`, `aws-cli`), `docker`.
+
+Dev tools & CLI quality-of-life: `git`, `gh` (`github-cli`), `homebrew` (`brew`), `neovim` (`nvim`, `vim`), `fzf`, `ripgrep` (`rg`), `bat`, `jq`, `tmux`.
+
+The Linux Go step is architecture-aware — it picks the right tarball for `x86_64`, `aarch64`, or `armv6` (Raspberry Pi). The same applies to the Linux AWS CLI installer.
 
 Anything else falls back to your OS package manager (`brew search` → `brew install`, `apt-cache search` → `sudo apt install`, etc.).
 
@@ -80,7 +133,7 @@ Zero dependencies beyond the Rust standard library. Minimum Rust version: 1.70.
 cargo test
 ```
 
-Covers alias resolution, `/etc/os-release` parsing (including derivatives), argument parsing, and guide construction.
+Covers alias resolution, `/etc/os-release` parsing (including derivatives), argument parsing (all flags), guide construction, fuzzy search ranking, shell adaptation, uninstall/check modes, and all three non-text renderers (markdown, JSON, script).
 
 ## Why not just run the commands
 
