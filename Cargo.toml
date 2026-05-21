@@ -1,10 +1,31 @@
 [package]
-   name = "goose-cli"   
-   version = "0.2.0"
-   edition = "2021"
-   description = "Step-by-step install helper. Tells you what to type, doesn't run it."
-   license = "MIT"    
-   repository = "https://github.com/Montana/goose"
-   readme = "README.md"
-   keywords = ["cli", "install", "setup"]   # max 5
-   categories = ["command-line-utilities"]
+name = "goose-cli"
+version = "0.2.0"
+edition = "2021"
+rust-version = "1.70"
+authors = ["Michael Mendy"]
+description = "Step-by-step install helper. Tells you what to type, doesn't run it."
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Montana/goose"
+homepage = "https://github.com/Montana/goose"
+documentation = "https://github.com/Montana/goose#readme"
+keywords = ["cli", "install", "setup", "helper", "package-manager"]
+categories = ["command-line-utilities", "development-tools"]
+# files that shouldn't bloat the published .crate tarball.
+exclude = [
+    ".github/**",
+    "*.gif",
+    "*.png",
+    "docs/**",
+]
+
+[[bin]]
+name = "goose"
+path = "src/main.rs"
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
