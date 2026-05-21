@@ -1,5 +1,13 @@
 # goose
 
+<p align="center">
+  <a href="https://crates.io/crates/goose-cli">
+    <img src="https://img.shields.io/crates/v/goose-cli?style=for-the-badge&logo=rust&label=crates.io" alt="goose-cli on crates.io">
+  </a>
+</p>
+
+*Install Anything Easily*
+
 <img width="1817" height="866" alt="goose" src="https://github.com/user-attachments/assets/27326804-4b41-4909-8e7e-631df4ef2b0f" />
 
 <br>_Logo was vaguely inspired by [house](https://github.com/house)._</br>
