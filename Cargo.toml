@@ -1,16 +1,10 @@
 [package]
-name = "goose"
-version = "0.2.0"
-edition = "2021"
-rust-version = "1.70"
-description = "Step-by-step install helper. Tells you what to type, doesn't run it."
-
-[[bin]]
-name = "goose"
-path = "src/main.rs"
-
-[profile.release]
-opt-level = "z"
-lto = true
-strip = true
-codegen-units = 1
+   name = "goose-cli"   
+   version = "0.2.0"
+   edition = "2021"
+   description = "Step-by-step install helper. Tells you what to type, doesn't run it."
+   license = "MIT"    
+   repository = "https://github.com/Montana/goose"
+   readme = "README.md"
+   keywords = ["cli", "install", "setup"]   # max 5
+   categories = ["command-line-utilities"]
